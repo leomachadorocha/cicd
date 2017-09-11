@@ -22,7 +22,6 @@ PREPARAR O AMBIENTE
 
 4 - setup-jenkins.txt
 
-=================================================================
 
 CONFIGURAR O AMBIENTE (PARA O LAB)
 --------------------------------
@@ -31,7 +30,6 @@ CONFIGURAR O AMBIENTE (PARA O LAB)
 
 2 - test-local-workstation-build.txt
 
-=================================================================
 
 PREPARAR O PIPELINE (PARA O LAB)
 --------------------------------

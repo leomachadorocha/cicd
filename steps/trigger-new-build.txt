@@ -1,0 +1,24 @@
+﻿
+Committing a new version of the application source code triggers a new build as a result of the Git hook you configured. 
+It is good practice to increment the version number each time you make changes to your application. 
+You can increment the version number manually or automatically.
+
+Increment the version number:
+
+1 - Make some changes in the application, changing something in the title (near line 45).
+vi $HOME/openshift-tasks/src/main/webapp/index.js
+
+2 - Increment the version number of the project each time code is pushed using Maven, 
+    for example, updating the version number (VERSION=1.7) with the next minor or major number (VERSION=1.8).
+
+cd $HOME/openshift-tasks
+export VERSION=1.8
+mvn versions:set -f pom.xml -s nexus_settings.xml -DgenerateBackupPoms=false -DnewVersion=${VERSION}
+git commit -m "Increased version to ${VERSION}" pom.xml
+git push gogs master
+
+3 - After a few minutes, when prompted, approve the switch to the new version.
+
+4 - Click "Proceed".
+
+5 - Once the pipeline finishes successfully, verify that you can see the updated application.

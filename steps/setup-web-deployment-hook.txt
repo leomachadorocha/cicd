@@ -1,0 +1,35 @@
+﻿
+To automate the build whenever new content is pushed to the "openshift-tasks" repository, set up a Git hook in Gogs. 
+This way a Jenkins build is triggered whenever code is pushed to the "openshift-tasks" source repository on Gogs.
+
+1 - Open a browser and log in to Jenkins.
+
+2 - In the top right corner, click the down arrow next to your user name and select "Configure".
+
+3 - Click "Show API Token" and make note of the API token that is displayed.
+
+4 - Open a browser, navigate to the Gogs server, log in, and go to the CICDLabs/openshift-tasks repository.
+
+5 - Click "Settings", and then click "Git Hooks".
+
+6 - Click the pencil next to post-receive.
+
+7 - Under the Hook Content, paste this script, replacing 
+    <userid> with your Jenkins user ID, 
+    <apiToken> with the API token you retrieved earlier, 
+    <jenkinsService> with the name of your Jenkins Service and 
+    <jenkinsProject> with the name of the OpenShift project your Jenkins Service is located in.
+
+This script signals the Jenkins "Tasks" build job each time a commit is made to the "master" branch
+
+#!/bin/bash
+
+while read oldrev newrev refname
+do
+    branch=$(git rev-parse --symbolic --abbrev-ref $refname)
+    if [[ "$branch" == "master" ]]; then
+    	curl -k -X POST --user <userid>:<apiToken> http://<jenkinsService>.<jenkinsProject>.svc.cluster.local/job/Tasks/build
+    fi
+done
+
+8 - Click "Update Hook".

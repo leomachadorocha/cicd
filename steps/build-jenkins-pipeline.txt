@@ -1,0 +1,21 @@
+﻿
+The Jenkins pipeline performs the following steps:
+
+- Checkout source code
+- Build WAR
+- Run unit tests
+- Perform code analysis
+- Publish to Nexus
+- Build OpenShift image using binary build
+- Deploy to test
+- Run integration tests
+- Deploy the new version to production (Blue/Green)
+- Get approval to switch to the new version
+- Switch to the new route
+
+1 - In Jenkins, create a job with the name "Tasks" and type "Pipeline".
+
+2 - Use the Groovy pipeline script (/pipeline/groovy-script.txt), either inline in the Jenkins job, or by storing it in the openshift-tasks Gogs repository and pointing the Jenkins job to it. 
+    Depending on the approach make sure to use the correct version of the "Checkout Source" stage. 
+    Make sure you double-check references to SkyDNS services and replace <gogs_user> and <gogs_password> with your Gogs user ID and password where necessary.
+

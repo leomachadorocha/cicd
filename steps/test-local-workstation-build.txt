@@ -1,0 +1,14 @@
+﻿
+Estes passos são apenas se o computador estiver configurado para buildar aplicações J2EE usando maven.
+
+1 - Make sure that you can build the openshift-tasks application.
+cd $HOME/openshift-tasks
+mvn clean install -DskipTests=true -s ./nexus_settings.xml
+
+2 - Run the unit tests.
+mvn test -s ./nexus_settings.xml
+
+3 - Run the code analysis tests.
+mvn sonar:sonar -s ./nexus_settings.xml -Dsonar.host.url=http://$(oc get route sonarqube -n sonarqube --template='{{ .spec.host }}')
+
+OBS: When the build and tests succeed without error, you are ready to proceed.

@@ -1,0 +1,59 @@
+﻿
+1 - In Gogs create an organization named "CICDLabs".
+
+2 - Under the "CICDLabs" organization create a repository called "openshift-tasks".
+
+3 - Clone the source code from GitHub and push it to Gogs.
+    cd $HOME
+    git clone https://github.com/wkulhanek/openshift-tasks.git
+    cd $HOME/openshift-tasks
+    git remote add gogs http://<gogs_user>:<gogs_password>@$(oc get route gogs -n gogs --template='{{ .spec.host }}')/CICDLabs/openshift-tasks.git
+    git push -u gogs master
+
+4 - Set up "nexus_settings.xml" for local builds, making sure that <url> points to your specific Nexus URL.
+    vi $HOME/openshift-tasks/nexus_settings.xml
+
+<?xml version="1.0"?>
+<settings>
+  <mirrors>
+    <mirror>
+      <id>Nexus</id>
+      <name>Nexus Public Mirror</name>
+      <url>http://nexus3-nexus.apps.na1.openshift.opentlc.com/repository/maven-all-public/</url>
+      <mirrorOf>*</mirrorOf>
+    </mirror>
+  </mirrors>
+  <servers>
+  <server>
+    <id>nexus</id>
+    <username>admin</username>
+    <password>admin123</password>
+  </server>
+</servers>
+</settings>
+
+5 - Set up "nexus_openshift_settings.xml" for builds within the OpenShift environment (Jenkins), making sure that the OpenShift internal SkyDNS name for Nexus is in the <url> field.
+    vi $HOME/openshift-tasks/nexus_openshift_settings.xml
+
+<?xml version="1.0"?>
+<settings>
+  <mirrors>
+    <mirror>
+      <id>Nexus</id>
+      <name>Nexus Public Mirror</name>
+      <url>http://nexus3.nexus.svc.cluster.local:8081/repository/maven-all-public/</url>
+      <mirrorOf>*</mirrorOf>
+    </mirror>
+  </mirrors>
+  <servers>
+  <server>
+    <id>nexus</id>
+    <username>admin</username>
+    <password>admin123</password>
+  </server>
+</servers>
+</settings>
+
+6 - Commit and Push the updated settings files to Gogs.
+git commit -m "Update Settings files for Nexus" nexus_settings.xml nexus_openshift_settings.xml
+git push gogs master

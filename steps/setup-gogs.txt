@@ -1,0 +1,53 @@
+
+1 - Set up the project.
+oc new-project gogs --display-name "Shared Gogs" --description "Shared Gogs"
+
+2 - Set up the persistent PostgreSQL database.
+oc new-app postgresql-persistent -p POSTGRESQL_DATABASE=gogs -p POSTGRESQL_USER=gogs -p POSTGRESQL_PASSWORD=gogs -p VOLUME_CAPACITY=4Gi -l app=postgresql-gogs
+
+3 - Set up the Gogs pod.
+    OBS: Make sure that PostgreSQL is deployed before starting the Gogs deployment.
+#oc new-app wkulhanek/gogs:11.4 -l app=gogs
+oc new-app wkulhanek/gogs:latest -l app=gogs
+
+4 - Create a new PVC and connect it to "/data".
+oc create -f gogs-pvc.yaml
+oc set volume dc/gogs --add --overwrite --name=gogs-volume-1 --mount-path=/data/ --type persistentVolumeClaim --claim-name=gogs-pvc
+
+5 - Expose the service as a route.
+oc expose svc gogs
+
+6 - Navigate to "gogs_route" (open the application).
+oc get route gogs
+http://<gogs_route>
+
+7 - Set up Gogs with these values:
+Database Type: 	 PostgreSQL
+Host: 		 postgresql:5432
+User: 		 gogs
+Password: 	 gogs
+Database Name: 	 gogs
+Run User: 	 gogs
+Application URL: http://<gogs_route>
+
+8 - Click "Install Gogs".
+
+9 - Examine the generated "app.ini" file.
+    OBS: On Windows you will need to manually determine the pod name and pass it to the "oc exec" command.
+oc exec $(oc get pod | grep "^gogs" | awk '{print $1}') -- cat /opt/gogs/custom/conf/app.ini | more
+
+10 - Make the changes permanent.
+oc exec $(oc get pod | grep "^gogs" | awk '{print $1}') -- cat /opt/gogs/custom/conf/app.ini > app.ini
+
+11 - Create the ConfigMap and mount it as a volume.
+oc create configmap gogs --from-file=app.ini
+oc set volume dc/gogs --add --overwrite --name=config-volume -m /opt/gogs/custom/conf/ -t configmap --configmap-name=gogs
+
+12 - Remove the "app.ini" file.
+rm app.ini
+
+13 - Wait until the redeployment finishes.
+
+14 - Open Gogs and register.
+
+15 - Log in to Gogs.

@@ -1,0 +1,20 @@
+﻿
+To integrate the pipeline with the OpenShift web console, you create a build configuration that points to this pipeline. 
+This build configuration must be in the same project as the Jenkins pod (unless you configure the master-config.yaml to point to another Jenkins instance).
+
+
+1 - Edit the tasks-pipeline.yaml, if necessary (specialy line 11).
+
+    You are pointing to the Jenkinsfile in the Gogs repository (line 11), as you did in the Jenkins "Tasks" job. 
+    It is also possible to embed the entire pipeline script into the build configuration.
+
+2 - Create the build configuration in OpenShift.
+oc project jenkins
+oc create -f tasks-pipeline.yaml
+
+3 - In the OpenShift web console, switch to your Jenkins project and open the Pipelines view (under Builds).
+
+4 - Click "Start Pipeline" to trigger a new pipeline.
+
+5 - Click "View Log" to view the pipeline progression and follow along in Jenkins.
+

@@ -1,0 +1,15 @@
+﻿
+1 - Create the OpenShift project to hold the production version of the "openshift-tasks" application 
+    and set up for Blue/Green deployment by deploying two versions of the application (tasks-green and tasks-blue), 
+    initially exposing the tasks-green service as the tasks route.
+
+oc new-project tasks-prod --display-name "Tasks Production" --description "Tasks Production"
+oc policy add-role-to-group system:image-puller system:serviceaccounts:tasks-prod -n tasks-dev
+oc policy add-role-to-user edit system:serviceaccount:jenkins:jenkins -n tasks-prod
+oc new-app tasks-dev/tasks:ProdReady-1.0 --name=tasks-green --allow-missing-imagestream-tags=true
+oc new-app tasks-dev/tasks:ProdReady-1.0 --name=tasks-blue --allow-missing-imagestream-tags=true
+oc set triggers dc/tasks-green --manual
+oc set triggers dc/tasks-blue --manual
+oc expose dc tasks-blue --port 8080
+oc expose dc tasks-green --port 8080
+oc expose svc/tasks-green --name tasks

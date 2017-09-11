@@ -1,0 +1,6 @@
+﻿
+1 - Set up the project.
+oc new-project jenkins --display-name "Shared Jenkins" --description "Shared Jenkins"
+
+2 - Set up the Persistent Jenkins pod with 1 GB of memory (otherwise Jenkins crashes frequently) and a persistent volume claim of 4 GB.
+oc new-app jenkins-persistent -p ENABLE_OAUTH=true -p MEMORY_LIMIT=1Gi -p VOLUME_CAPACITY=4Gi

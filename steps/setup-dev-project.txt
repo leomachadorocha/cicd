@@ -1,0 +1,12 @@
+﻿
+1 - Create the OpenShift project to hold the development version of the "openshift-tasks" application. 
+    Make sure that automatic building is turned off. 
+    Finally, tag the built image as "TestingCandidate-1.0" and "ProdReady-1.0".
+
+oc new-project tasks-dev --display-name "Tasks Development" --description "Tasks Development"
+oc policy add-role-to-user edit system:serviceaccount:jenkins:jenkins -n tasks-dev
+oc new-build --binary=true --name="tasks" jboss-eap70-openshift:1.5
+oc new-app tasks-dev/tasks:TestingCandidate-1.0 --name=tasks --allow-missing-imagestream-tags=true
+oc set triggers dc/tasks --manual
+oc expose dc tasks --port 8080
+oc expose svc tasks

@@ -1,6 +1,4 @@
 
-Ordem de execução dos arquivos:
-
 PREPARAR O AMBIENTE
 -------------------
 
